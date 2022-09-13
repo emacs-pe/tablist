@@ -1820,8 +1820,8 @@ Named filter are saved in the variable `tablist-named-filter'."
 (defun tablist-display-filter (&optional flag)
   "Display the current filter according to FLAG.
 
-If FLAG has the value 'toggle, toggle it's visibility.
-If FLAG has the 'state, then do nothing but return the current
+If FLAG has the value \\='toggle, toggle it's visibility.
+If FLAG has the \\='state, then do nothing but return the current
 visibility."
   (interactive (list 'toggle))
   (let* ((tag 'tablist-display-filter-mode-line-tag)
@@ -1927,7 +1927,7 @@ AWINDOW is deleted."
 
 Example:
 
-     \(tablist-generate-sorter 0 '< 'string-to-number\)
+     (tablist-generate-sorter 0 \\='< \\='string-to-number)
 
 would create a sort function sorting `tabulated-list-entries' on
 the 0-th column as numbers by the less-than relation."
