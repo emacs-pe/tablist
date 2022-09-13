@@ -22,12 +22,14 @@
 
 ;;
 
+;;; Code:
+
+(require 'cl-lib)
+
 (defvar python-mode-hook)
 (let (python-mode-hook)                 ;FIXME: Why?
 (require 'semantic/wisent/comp)
 (require 'semantic/wisent/wisent))
-
-;;; Code:
 
 (defvar wisent-eoi-term)
 (declare-function wisent-parse "semantic/wisent/wisent.el")

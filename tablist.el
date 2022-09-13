@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;
 ;; This package adds marks and filters to tabulated-list-mode.  It
-;; also kind of puts a dired face on tabulated list buffers.
+;; also kind of puts a Dired face on tabulated list buffers.
 ;;
 ;; It can be used by deriving from tablist-mode and some features by
 ;; using tablist-minor-mode inside a tabulated-list-mode buffer.
@@ -33,7 +33,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'ring)
 (require 'tabulated-list)
 (require 'dired)
 (require 'tablist-filter)
@@ -43,16 +42,15 @@
 ;;
 
 (defmacro tablist-save-marks (&rest body)
-  "Eval body, while preserving all marks."
+  "Eval BODY, while preserving all marks."
   (let ((marks (make-symbol "marks")))
     `(let (,marks)
        (save-excursion
          (goto-char (point-min))
-         (let ((re "^\\([^ ]\\)"))
-           (while (re-search-forward re nil t)
-             (push (cons (tabulated-list-get-id)
-                         (tablist-get-mark-state))
-                   ,marks))))
+         (while (re-search-forward "^\\([^ ]\\)" nil t)
+           (push (cons (tabulated-list-get-id)
+                       (tablist-get-mark-state))
+                 ,marks)))
        (unwind-protect
            (progn ,@body)
          (save-excursion
@@ -66,7 +64,7 @@
                  (forward-line)))))))))
 
 (defmacro tablist-with-remembering-entry (&rest body)
-  "Remember where body left of and restore previous position.
+  "Remember where BODY left of and restore previous position.
 
 If the current entry is still visible, move to it. Otherwise move
 to the next visible one after it.  If that also fails, goto to
@@ -460,7 +458,7 @@ a face on."
 (defun tablist-mark-forward (&optional arg interactive)
   "Mark ARG entries forward.
 
-ARG is interpreted as a prefix-arg.  If interactive is non-nil,
+ARG is interpreted as a `prefix-arg'.  If INTERACTIVE is non-nil,
 maybe use the active region instead of ARG.
 
 See `tablist-put-mark' for how entries are marked."
@@ -553,7 +551,7 @@ OLD and NEW are both characters used to mark files."
 MARKS should be a string of mark characters to match and defaults
 to all marks.  Interactively, remove all marks, unless a prefix
 arg was given, in which case ask about which ones to remove.
-Give a message, if interactive is non-nil.
+Give a message, if INTERACTIVE is non-nil.
 
 Returns the number of unmarked marks."
   (interactive
@@ -824,7 +822,7 @@ STATE is a return value of `tablist-get-mark-state'."
   (tablist-move-to-column (car (tablist-major-columns))))
 
 (defun tablist-forward-column (n)
-  "Move n columns forward, while wrapping around."
+  "Move N columns forward, while wrapping around."
   (interactive "p")
   (unless (tabulated-list-get-id)
     (error "No entry on this line"))
@@ -849,7 +847,7 @@ STATE is a return value of `tablist-get-mark-state'."
        (mod (+ current n) (length columns))))))
 
 (defun tablist-backward-column (n)
-  "Move n columns backward, while wrapping around."
+  "Move N columns backward, while wrapping around."
   (interactive "p")
   (tablist-forward-column (- n)))
 
@@ -888,7 +886,7 @@ Return t, if point is now in a visible area."
   "Query the user whether to proceed with some operation.
 
 Operation should be a symbol or string describing the operation,
-ARG the prefix-arg of the command used in
+ARG the `prefix-arg' of the command used in
 `tablist-get-marked-items' or elsewhere, to get the ITEMS."
 
   (let ((pp-items (mapcar 'tablist-pretty-print-entry
@@ -1313,7 +1311,7 @@ Else ask the user, using PROMPT and DEFAULT."
 
 Use SEPARATOR (or ;) and quote if necessary (or always if
 ALWAYS-QUOTE-P is non-nil).  Only consider non-filtered entries,
-unless invisible-p is non-nil.  Create a buffer for the output or
+unless INVISIBLE-P is non-nil.  Create a buffer for the output or
 insert it after point in OUT-BUFFER.  Finally if DISPLAY-P is
 non-nil, display this buffer.
 
@@ -1674,7 +1672,7 @@ The filter is and'ed with the current filter.  Use
    (called-interactively-p 'any)))
 
 (defun tablist-push-equal-filter (column-name string)
-  "Add a new filter whre string equals COLUMN-NAME's value.
+  "Add a new filter where STRING equals COLUMN-NAME's value.
 
 The filter is and'ed with the current filter.  Use
 `tablist-toggle-first-filter-logic' to change this."
@@ -1906,8 +1904,8 @@ AWINDOW is deleted."
                awindow))))
     (add-hook 'window-configuration-change-hook hook)))
 
-(defun tablist-display-buffer-split-below-and-attach (buf alist)
-  "Display buffer action using `tablist-window-attach'."
+(defun tablist-display-buffer-split-below-and-attach (buffer alist)
+  "Display BUFFER action using `tablist-window-attach'."
   (let ((window (selected-window))
         (height (cdr (assq 'window-height alist)))
         newwin)
@@ -1916,7 +1914,7 @@ AWINDOW is deleted."
         (setq height (round (* height (frame-height)))))
       (setq height (- (max height window-min-height))))
     (setq newwin (window--display-buffer
-                  buf
+                  buffer
                   (split-window-below height)
                   'window alist))
     (tablist-window-attach newwin window)
@@ -1934,9 +1932,9 @@ the 0-th column as numbers by the less-than relation."
 
   (lambda (e1 e2)
     (funcall compare-fn
-             (funcall (or read-fn 'identity)
+             (funcall (or read-fn #'identity)
                       (aref (cadr e1) column))
-             (funcall (or read-fn 'identity)
+             (funcall (or read-fn #'identity)
                       (aref (cadr e2) column)))))
 
 (provide 'tablist)
